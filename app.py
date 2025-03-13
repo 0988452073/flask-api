@@ -1,5 +1,4 @@
-import os
-from flask import Flask
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -7,6 +6,15 @@ app = Flask(__name__)
 def home():
     return "Flask API is running!"
 
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({"error": "No image uploaded"}), 400
+
+    image = request.files['image']
+    return jsonify({"message": "Image received", "filename": image.filename})
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # 讀取 Render 提供的 PORT，預設 5000
+    from os import environ
+    port = int(environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
